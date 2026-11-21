@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { Flame, Shield } from 'lucide-react'
+import { Flame, Link2, Shield } from 'lucide-react'
 import {
   fetchBurst,
   fetchHealth,
   fetchMetrics,
+  getApiBase,
+  isStaticHost,
   resetBurst,
+  setApiBase,
   simulateBurst,
   submitTriage,
 } from './api'
@@ -28,18 +31,32 @@ export default function App() {
   const [error, setError] = useState(null)
   const [result, setResult] = useState(null)
   const [highlightedTicketId, setHighlightedTicketId] = useState(null)
+  const [showApiModal, setShowApiModal] = useState(false)
+  const [apiUrlInput, setApiUrlInput] = useState(() => getApiBase())
 
-  useEffect(() => {
+  const refreshConnection = () => {
     fetchHealth()
       .then((h) => {
         setHealth(h)
+        setError(null)
         setDrafterMode(h.cloud_drafter_enabled ? 'cloud' : 'local')
       })
-      .catch(() => {})
+      .catch(() => setHealth(null))
 
     fetchBurst().then(setBurst).catch(() => {})
     fetchMetrics().then(setMetrics).catch((e) => setMetricsError(e.message))
+  }
+
+  useEffect(() => {
+    refreshConnection()
   }, [])
+
+  const handleSaveApiBase = (e) => {
+    e.preventDefault()
+    setApiBase(apiUrlInput)
+    setShowApiModal(false)
+    refreshConnection()
+  }
 
   const runTriage = async (subjVal, bodyVal, modeOverride) => {
     const useMode = modeOverride || drafterMode
@@ -145,12 +162,26 @@ export default function App() {
           </nav>
 
           <div className="flex items-center gap-2.5">
-            {health && (
-              <span className="hidden items-center gap-1.5 font-mono text-[11px] text-zinc-400 md:inline-flex">
+            {health ? (
+              <button
+                type="button"
+                onClick={() => isStaticHost() && setShowApiModal(true)}
+                title={isStaticHost() ? 'Click to change connected backend API URL' : 'Connected to SentinelDesk FastAPI'}
+                className="hidden items-center gap-1.5 rounded-lg px-2 py-1 font-mono text-[11px] text-zinc-400 transition hover:text-zinc-200 md:inline-flex"
+              >
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                 {health.kb_indexed_tickets?.toLocaleString()} KB
-              </span>
-            )}
+              </button>
+            ) : isStaticHost() ? (
+              <button
+                type="button"
+                onClick={() => setShowApiModal(true)}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-amber-500/35 bg-amber-500/10 px-2.5 py-1.5 text-xs font-medium text-amber-200 transition hover:bg-amber-500/20"
+              >
+                <Link2 className="h-3.5 w-3.5" />
+                Connect API
+              </button>
+            ) : null}
             <button
               type="button"
               onClick={burst?.active_outage ? handleResetBurst : handleSimulateBurst}
@@ -173,6 +204,34 @@ export default function App() {
       </header>
 
       <main className="mx-auto flex max-w-[1360px] flex-col gap-5 px-4 py-6 sm:px-6">
+        {showApiModal && (
+          <form
+            onSubmit={handleSaveApiBase}
+            className="flex flex-wrap items-center gap-2 rounded-xl border border-white/[0.1] bg-[#111114] p-3 text-xs"
+          >
+            <span className="font-medium text-zinc-300">Backend API URL:</span>
+            <input
+              type="url"
+              value={apiUrlInput}
+              onChange={(e) => setApiUrlInput(e.target.value)}
+              placeholder="https://your-tunnel-or-cloud-run-url"
+              className="min-w-[260px] flex-1 rounded-lg border border-white/[0.08] bg-[#09090b] px-3 py-1.5 font-mono text-xs text-zinc-100 outline-none focus:border-sky-400/60"
+            />
+            <button
+              type="submit"
+              className="rounded-lg bg-white px-3 py-1.5 font-semibold text-zinc-950 hover:bg-zinc-200"
+            >
+              Connect
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowApiModal(false)}
+              className="rounded-lg border border-white/[0.08] px-2.5 py-1.5 text-zinc-400 hover:text-white"
+            >
+              Close
+            </button>
+          </form>
+        )}
         {error && (
           <div className="rounded-xl border border-rose-500/35 bg-rose-950/30 px-4 py-2.5 text-xs text-rose-200">
             {error}

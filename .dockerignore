@@ -1,0 +1,16 @@
+.venv/
+.git/
+.env
+.env.local
+__pycache__/
+*.pyc
+frontend/node_modules/
+frontend/dist/
+data/*.parquet
+artifacts/*.index
+artifacts/*.npy
+artifacts/*.npz
+artifacts/*.pt
+artifacts/*.joblib
+artifacts/*.parquet
+*.log
