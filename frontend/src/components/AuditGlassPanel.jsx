@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import {
+  AlertTriangle,
   Check,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
   Clock,
+  Cloud,
   Copy,
+  Cpu,
   Lock,
   ShieldAlert,
   ShieldCheck,
@@ -18,20 +21,25 @@ import PrecedentList from './PrecedentList'
 
 function renderCitations(text, onCiteClick) {
   if (!text) return null
-  return text.split(/(\[TKT-\d{5}\])/g).map((part, idx) => {
-    const m = part.match(/^\[(TKT-\d{5})\]$/)
-    if (m) {
-      const tid = m[1]
+  // Handle both single [TKT-00001] and grouped [TKT-00001, TKT-00002] citations cleanly
+  return text.split(/(\[TKT-\d{5}(?:\s*,\s*TKT-\d{5})*\])/g).map((part, idx) => {
+    const groupMatch = part.match(/^\[(TKT-\d{5}(?:\s*,\s*TKT-\d{5})*)\]$/)
+    if (groupMatch) {
+      const ids = groupMatch[1].split(/\s*,\s*/)
       return (
-        <button
-          key={idx}
-          type="button"
-          onClick={() => onCiteClick(tid)}
-          title={`Jump to precedent ${tid}`}
-          className="mx-0.5 inline-flex items-center rounded bg-sky-500/15 px-1.5 py-0.5 font-mono text-xs font-semibold text-sky-300 transition hover:bg-sky-500/30 hover:text-white"
-        >
-          [{tid}]
-        </button>
+        <React.Fragment key={idx}>
+          {ids.map((tid) => (
+            <button
+              key={`${idx}-${tid}`}
+              type="button"
+              onClick={() => onCiteClick(tid)}
+              title={`Jump to precedent ${tid}`}
+              className="mx-0.5 inline-flex items-center rounded bg-sky-500/15 px-1.5 py-0.5 font-mono text-xs font-semibold text-sky-300 transition hover:bg-sky-500/30 hover:text-white"
+            >
+              [{tid}]
+            </button>
+          ))}
+        </React.Fragment>
       )
     }
     return <React.Fragment key={idx}>{part}</React.Fragment>
@@ -51,15 +59,17 @@ function MetricTile({ label, value, confidence, accent = 'zinc' }) {
           : 'text-white'
 
   return (
-    <div className="rounded-xl border border-white/[0.07] bg-[#09090b] px-4 py-3">
+    <div className="flex flex-col justify-between rounded-xl border border-white/[0.07] bg-[#09090b] px-4 py-3">
       <div className="flex items-center justify-between text-xs text-zinc-500">
         <span>{label}</span>
         <span className={`font-mono font-medium ${low ? 'text-amber-400' : 'text-zinc-300'}`}>
           {pct}%
         </span>
       </div>
-      <div className={`mt-1 truncate text-sm font-semibold ${textTone}`}>{value}</div>
-      <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-zinc-800">
+      <div className={`mt-1.5 text-sm font-semibold leading-snug ${textTone}`} title={value}>
+        {value}
+      </div>
+      <div className="mt-2.5 h-1 w-full overflow-hidden rounded-full bg-zinc-800">
         <div
           className={`h-full rounded-full transition-all duration-500 ${
             low ? 'bg-amber-400' : 'bg-sky-400'
@@ -108,6 +118,11 @@ export default function AuditGlassPanel({ result, loading, highlightedTicketId, 
 
   const { triage, escalation, resolution, grounding_audit, privacy_vault, precedents, latency_ms } = result
   const isEscalated = escalation.status === 'ESCALATE_ON_CALL'
+  const route = escalation.route || (isEscalated ? 'PAGE_ON_CALL' : 'AUTO_DRAFT_READY')
+  const isPageOnCall = route === 'PAGE_ON_CALL'
+  const isHumanReview = route === 'HUMAN_REVIEW'
+  const isAirGapped = result.execution_mode === 'local_airgapped'
+  const cloudCalls = triage?.cloud_calls_made ?? 0
   const prioTone =
     triage.priority.label === 'high'
       ? 'rose'
@@ -129,16 +144,40 @@ export default function AuditGlassPanel({ result, loading, highlightedTicketId, 
       {/* 1. Decision + Triage Summary Card */}
       <div className="rounded-2xl border border-white/[0.08] bg-[#111114] p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2">
             <span
               className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
-                isEscalated
+                isPageOnCall
                   ? 'border border-rose-500/40 bg-rose-500/15 text-rose-300'
-                  : 'border border-emerald-500/40 bg-emerald-500/15 text-emerald-300'
+                  : isHumanReview
+                    ? 'border border-amber-500/40 bg-amber-500/15 text-amber-300'
+                    : 'border border-emerald-500/40 bg-emerald-500/15 text-emerald-300'
               }`}
             >
-              {isEscalated ? <Siren className="h-3.5 w-3.5" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
-              {isEscalated ? 'Escalate to On-Call Engineer' : 'Auto-Draft Ready'}
+              {isPageOnCall ? (
+                <Siren className="h-3.5 w-3.5" />
+              ) : isHumanReview ? (
+                <AlertTriangle className="h-3.5 w-3.5" />
+              ) : (
+                <CheckCircle2 className="h-3.5 w-3.5" />
+              )}
+              {isPageOnCall
+                ? 'Escalate · Page On-Call Engineer'
+                : isHumanReview
+                  ? 'Escalate · Human Review Required'
+                  : 'Auto-Draft Ready'}
+            </span>
+
+            <span
+              className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 font-mono text-[11px] ${
+                isAirGapped
+                  ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
+                  : 'border-sky-500/30 bg-sky-500/10 text-sky-300'
+              }`}
+              title={isAirGapped ? 'Zero external cloud requests made' : `${cloudCalls} PII-scrubbed Gemini API call(s)`}
+            >
+              {isAirGapped ? <Cpu className="h-3 w-3" /> : <Cloud className="h-3 w-3" />}
+              {isAirGapped ? 'Air-Gapped · 0 Cloud Calls' : `Cloud Hybrid · ${cloudCalls} API`}
             </span>
 
             <span className="rounded-full border border-white/[0.08] bg-zinc-900 px-2.5 py-0.5 font-mono text-[11px] text-zinc-300">
@@ -163,11 +202,20 @@ export default function AuditGlassPanel({ result, loading, highlightedTicketId, 
 
         {/* Concise Escalation Reasons (Only when escalated) */}
         {isEscalated && escalation.reasons?.length > 0 && (
-          <div className="mt-3 rounded-xl border border-rose-500/25 bg-rose-950/20 px-3.5 py-2.5 text-xs text-rose-200">
+          <div
+            className={`mt-3 rounded-xl border px-3.5 py-2.5 text-xs ${
+              isPageOnCall
+                ? 'border-rose-500/25 bg-rose-950/20 text-rose-200'
+                : 'border-amber-500/25 bg-amber-950/20 text-amber-100'
+            }`}
+          >
             <ul className="space-y-1">
               {escalation.reasons.map((r, i) => (
                 <li key={i}>
-                  <span className="font-semibold text-rose-300">{r.label}:</span> {r.detail}
+                  <span className={`font-semibold ${isPageOnCall ? 'text-rose-300' : 'text-amber-300'}`}>
+                    {r.label}:
+                  </span>{' '}
+                  {r.detail}
                 </li>
               ))}
             </ul>

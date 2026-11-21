@@ -66,9 +66,9 @@ CLOUD_DRAFTER_MODELS = [
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434").rstrip("/")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "gemma4:e4b")
 
-# Hybrid triage blend weights
-HYBRID_ML_WEIGHT = float(os.getenv("HYBRID_ML_WEIGHT", "0.55"))
-HYBRID_D1_WEIGHT = float(os.getenv("HYBRID_D1_WEIGHT", "0.45"))
+# Hybrid triage blend weights (favor calibrated domain SVM + semantic Decision-1 tie-breaking)
+HYBRID_ML_WEIGHT = float(os.getenv("HYBRID_ML_WEIGHT", "0.75"))
+HYBRID_D1_WEIGHT = float(os.getenv("HYBRID_D1_WEIGHT", "0.25"))
 
 # Escalation gate thresholds
 MIN_CONFIDENCE_THRESHOLD = 0.65

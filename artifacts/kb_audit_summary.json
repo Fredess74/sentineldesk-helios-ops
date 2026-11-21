@@ -1,662 +1,185 @@
 {
   "dataset_repo": "Tobi-Bueck/customer-support-tickets",
-  "dataset_file": "dataset-tickets-multi-lang-4-20k.csv",
+  "dataset_file": "aa_dataset-tickets-multi-lang-5-2-50-version.csv",
   "split_seed": 42,
-  "total_rows": 20000,
-  "kb_train_rows": 16000,
-  "holdout_test_rows": 4000,
+  "duplicate_grouped_split": true,
+  "total_rows": 28587,
+  "kb_train_rows": 22869,
+  "holdout_test_rows": 5718,
   "zero_leakage_verified": true,
-  "columns": [
-    "subject",
-    "body",
-    "answer",
-    "type",
-    "queue",
-    "priority",
-    "language",
-    "tag_1",
-    "tag_2",
-    "tag_3",
-    "tag_4",
-    "tag_5",
-    "tag_6",
-    "tag_7",
-    "tag_8",
-    "ticket_id"
-  ],
-  "null_subject_count": 1163,
-  "null_subject_pct": 7.27,
-  "null_body_count": 2,
-  "null_answer_count": 4,
-  "p1_high_incident_count": 2824,
-  "p1_high_incident_pct": 17.65,
+  "null_subject_count": 3053,
+  "null_subject_pct": 13.35,
+  "null_body_count": 0,
+  "null_answer_count": 6,
+  "p1_high_incident_count": 3944,
+  "p1_high_incident_pct": 17.25,
   "body_length": {
-    "char_mean": 394.8,
-    "char_median": 357.0,
-    "char_p95": 840.0,
-    "word_mean": 57.1,
-    "word_median": 51.0
+    "char_mean": 387.4,
+    "char_median": 385.0,
+    "word_median": 54.0
   },
   "answer_length": {
-    "char_mean": 408.8,
+    "char_mean": 387.9,
     "char_median": 390.0,
-    "char_p95": 784.0,
-    "word_mean": 61.3,
-    "word_median": 59.0,
-    "l1_asks_clarifying_info_pct": 86.98,
-    "l1_contains_question_pct": 35.36,
-    "l1_mentions_refund_or_sla_pct": 1.44
+    "word_median": 58.0,
+    "l1_asks_clarifying_info_pct": 88.31,
+    "l1_contains_question_pct": 27.27,
+    "l1_mentions_refund_or_sla_pct": 1.06
   },
   "distributions": {
     "type": [
       {
         "label": "Incident",
-        "count": 6360,
-        "pct": 39.75
+        "count": 9173,
+        "pct": 40.11
       },
       {
         "label": "Request",
-        "count": 4623,
-        "pct": 28.89
+        "count": 6550,
+        "pct": 28.64
       },
       {
         "label": "Problem",
-        "count": 3343,
-        "pct": 20.89
+        "count": 4809,
+        "pct": 21.03
       },
       {
         "label": "Change",
-        "count": 1674,
-        "pct": 10.46
+        "count": 2337,
+        "pct": 10.22
       }
     ],
     "priority": [
       {
         "label": "medium",
-        "count": 6537,
-        "pct": 40.86
+        "count": 9212,
+        "pct": 40.28
       },
       {
         "label": "high",
-        "count": 6248,
-        "pct": 39.05
+        "count": 8942,
+        "pct": 39.1
       },
       {
         "label": "low",
-        "count": 3215,
-        "pct": 20.09
+        "count": 4715,
+        "pct": 20.62
       }
     ],
     "language": [
       {
         "label": "en",
-        "count": 9535,
-        "pct": 59.59
+        "count": 13082,
+        "pct": 57.2
       },
       {
         "label": "de",
-        "count": 6465,
-        "pct": 40.41
+        "count": 9787,
+        "pct": 42.8
       }
     ],
     "queue": [
       {
         "label": "Technical Support",
-        "count": 4695,
-        "pct": 29.34
+        "count": 6732,
+        "pct": 29.44
       },
       {
         "label": "Product Support",
-        "count": 2955,
-        "pct": 18.47
+        "count": 4250,
+        "pct": 18.58
       },
       {
         "label": "Customer Service",
-        "count": 2522,
-        "pct": 15.76
+        "count": 3399,
+        "pct": 14.86
       },
       {
         "label": "IT Support",
-        "count": 1831,
-        "pct": 11.44
+        "count": 2709,
+        "pct": 11.85
       },
       {
         "label": "Billing and Payments",
-        "count": 1664,
-        "pct": 10.4
+        "count": 2212,
+        "pct": 9.67
       },
       {
         "label": "Returns and Exchanges",
-        "count": 797,
-        "pct": 4.98
+        "count": 1141,
+        "pct": 4.99
       },
       {
         "label": "Service Outages and Maintenance",
-        "count": 611,
-        "pct": 3.82
+        "count": 912,
+        "pct": 3.99
       },
       {
         "label": "Sales and Pre-Sales",
-        "count": 438,
-        "pct": 2.74
+        "count": 746,
+        "pct": 3.26
       },
       {
         "label": "Human Resources",
-        "count": 271,
-        "pct": 1.69
+        "count": 454,
+        "pct": 1.99
       },
       {
         "label": "General Inquiry",
-        "count": 216,
-        "pct": 1.35
+        "count": 314,
+        "pct": 1.37
       }
     ]
   },
   "cross_tabs": {
     "type_x_priority": {
       "Incident": {
-        "low": 1148,
-        "medium": 2388,
-        "high": 2824
+        "low": 1730,
+        "medium": 3499,
+        "high": 3944
       },
       "Request": {
-        "low": 1023,
-        "medium": 2033,
-        "high": 1567
+        "low": 1537,
+        "medium": 2831,
+        "high": 2182
       },
       "Problem": {
-        "low": 690,
-        "medium": 1420,
-        "high": 1233
+        "low": 991,
+        "medium": 1937,
+        "high": 1881
       },
       "Change": {
-        "low": 354,
-        "medium": 696,
-        "high": 624
+        "low": 457,
+        "medium": 945,
+        "high": 935
       }
     },
     "language_x_type": {
       "en": {
-        "Incident": 3697,
-        "Request": 2791,
-        "Problem": 2004,
-        "Change": 1043
+        "Incident": 5249,
+        "Request": 3735,
+        "Problem": 2729,
+        "Change": 1369
       },
       "de": {
-        "Incident": 2663,
-        "Request": 1832,
-        "Problem": 1339,
-        "Change": 631
+        "Incident": 3924,
+        "Request": 2815,
+        "Problem": 2080,
+        "Change": 968
       }
     },
     "p1_by_queue": {
-      "Technical Support": 1490,
-      "Product Support": 415,
-      "Customer Service": 121,
-      "IT Support": 348,
-      "Billing and Payments": 110,
-      "Returns and Exchanges": 65,
-      "Service Outages and Maintenance": 231,
+      "Technical Support": 2073,
+      "Product Support": 542,
+      "Customer Service": 180,
+      "IT Support": 474,
+      "Billing and Payments": 175,
+      "Returns and Exchanges": 92,
+      "Service Outages and Maintenance": 358,
       "Sales and Pre-Sales": 13,
-      "Human Resources": 13,
-      "General Inquiry": 18
+      "Human Resources": 20,
+      "General Inquiry": 17
     }
   },
-  "pii_scan_kb_train": {
-    "email": 0,
-    "phone_like": 1,
-    "ip_address": 0,
-    "account_or_id": 0,
-    "placeholder_tel_or_acc": 279
-  },
-  "healthcare_vpn_outage_matches_kb_train": 3562,
-  "healthcare_vpn_samples": [
-    {
-      "ticket_id": "TKT-00000",
-      "language": "de",
-      "type": "Problem",
-      "queue": "Technical Support",
-      "priority": "high",
-      "subject": "Alarm für Datenverstoß",
-      "body": "Es gab einen medizinischen Datenverlust aufgrund mangelnder Verschlüsselung und veralteter Apache Hadoop. Es wurde unerlaubter Zugriff auf Patientendaten registriert. Wir haben MongoDB aktualisiert und Cassandra neu gest..."
-    },
-    {
-      "ticket_id": "TKT-00001",
-      "language": "en",
-      "type": "Incident",
-      "queue": "IT Support",
-      "priority": "high",
-      "subject": "Failure in Medical Data Encryption",
-      "body": "I'm encountering difficulties with the medical data encryption process. It suddenly stopped working, and I believe it could be because of compatibility issues with Redis 6.2. I've already restarted my NZXT Kraken Z63 and..."
-    },
-    {
-      "ticket_id": "TKT-00004",
-      "language": "en",
-      "type": "Change",
-      "queue": "IT Support",
-      "priority": "high",
-      "subject": "",
-      "body": "Customer Support, please address the request for the implementation of enhanced security protocols for medical data access and communication systems across all affected products and services. It is crucial to ensure the ..."
-    },
-    {
-      "ticket_id": "TKT-00008",
-      "language": "en",
-      "type": "Request",
-      "queue": "IT Support",
-      "priority": "medium",
-      "subject": "Enhancing Security for Medical Data with Sony Vegas Pro",
-      "body": "I am interested in using Sony Vegas Pro 18 for healthcare purposes. Could you provide details on the security features that can help secure medical data? It is crucial to ensure that patient data is protected and complia..."
-    },
-    {
-      "ticket_id": "TKT-00010",
-      "language": "de",
-      "type": "Problem",
-      "queue": "Billing and Payments",
-      "priority": "medium",
-      "subject": "Issue with Security Systems",
-      "body": "Unauthorized access controls on the medical data system have been identified. The outdated security protocols are likely the cause. So far, the antivirus software has been updated and user permissions have been checked. ..."
-    }
-  ],
-  "top_tags": [
-    {
-      "tag": "Tech Support",
-      "count": 6469
-    },
-    {
-      "tag": "IT",
-      "count": 6424
-    },
-    {
-      "tag": "Documentation",
-      "count": 5710
-    },
-    {
-      "tag": "Feedback",
-      "count": 5379
-    },
-    {
-      "tag": "Performance",
-      "count": 5330
-    },
-    {
-      "tag": "Bug",
-      "count": 5247
-    },
-    {
-      "tag": "Technical",
-      "count": 4663
-    },
-    {
-      "tag": "Security",
-      "count": 3854
-    },
-    {
-      "tag": "Resolution",
-      "count": 3351
-    },
-    {
-      "tag": "Feature",
-      "count": 2784
-    },
-    {
-      "tag": "Guidance",
-      "count": 2326
-    },
-    {
-      "tag": "Product",
-      "count": 2065
-    },
-    {
-      "tag": "Customer",
-      "count": 1840
-    },
-    {
-      "tag": "Crash",
-      "count": 1537
-    },
-    {
-      "tag": "Network",
-      "count": 1526
-    },
-    {
-      "tag": "Outage",
-      "count": 1525
-    },
-    {
-      "tag": "Integration",
-      "count": 1235
-    },
-    {
-      "tag": "Sales",
-      "count": 1164
-    },
-    {
-      "tag": "Disruption",
-      "count": 1097
-    },
-    {
-      "tag": "Billing",
-      "count": 977
-    }
-  ],
-  "examples_by_type": {
-    "Incident": [
-      {
-        "ticket_id": "TKT-00001",
-        "language": "en",
-        "priority": "high",
-        "queue": "IT Support",
-        "subject": "Failure in Medical Data Encryption",
-        "body": "I'm encountering difficulties with the medical data encryption process. It suddenly stopped working, and I believe it could be because of compatibility issues with Redis 6.2. I've already restarted my NZXT Kraken Z63 and...",
-        "answer": "I will help you with the medical data encryption failure. Please share more details about your setup and the error message you're seeing. I'll arrange a call to further diagnose and resolve the issue. Is <tel_num> a conv..."
-      },
-      {
-        "ticket_id": "TKT-00006",
-        "language": "en",
-        "priority": "high",
-        "queue": "Technical Support",
-        "subject": "Urgent: Issue with Data Encryption System",
-        "body": "Dear Customer Support, I am reaching out to discuss an unexpected problem with our data encryption system. The issue began abruptly, and we have not been able to pinpoint the exact cause. We believe it could be a result ...",
-        "answer": "Dear [Your Name], Thank you for contacting us regarding the issue with your data encryption system. We understand the urgency and the impact this has had on your operations. To effectively assist you, we need some additi..."
-      },
-      {
-        "ticket_id": "TKT-00012",
-        "language": "de",
-        "priority": "low",
-        "queue": "Returns and Exchanges",
-        "subject": "Problems with Security in the Hospital IT Systems",
-        "body": "System errors leaving medical data exposed, security protocols lost. A restart was attempted, and unusual occurrences have been checked.",
-        "answer": "I recognize the issue regarding a security flaw in the hospital IT systems. Please provide more details on the system errors and access controls. We need to discuss this further. It would be best if you could let us know..."
-      }
-    ],
-    "Request": [
-      {
-        "ticket_id": "TKT-00008",
-        "language": "en",
-        "priority": "medium",
-        "queue": "IT Support",
-        "subject": "Enhancing Security for Medical Data with Sony Vegas Pro",
-        "body": "I am interested in using Sony Vegas Pro 18 for healthcare purposes. Could you provide details on the security features that can help secure medical data? It is crucial to ensure that patient data is protected and complia...",
-        "answer": "We appreciate your interest in using Sony Vegas Pro 18 for healthcare needs. Securing medical data is a top priority, and understanding the importance of compliance with regulations is key. Sony Vegas Pro 18 offers sever..."
-      },
-      {
-        "ticket_id": "TKT-00013",
-        "language": "en",
-        "priority": "low",
-        "queue": "Billing and Payments",
-        "subject": "Exploring Integrations for Investment Analytics Tools with Codecademy",
-        "body": "Hello Customer Support, I am writing to seek information about the integrations available between Codecademy and investment analytics tools. As a Codecademy user, I am keen to explore how these integrations could enhance...",
-        "answer": "Dear [user], we value your interest in integrating Codecademy with investment analytics tools. We currently provide integrations with several tools that offer real-time data and interactive visualizations. For more detai..."
-      },
-      {
-        "ticket_id": "TKT-00003",
-        "language": "de",
-        "priority": "high",
-        "queue": "Billing and Payments",
-        "subject": "Digitale Dienste",
-        "body": "Welche Zahlungsmöglichkeiten gibt es?",
-        "answer": "Sehr geehrter Kunde, wir bieten eine Reihe von Zahlungsmöglichkeiten für unsere digitalen Dienste an, darunter Kreditkarte, Debitkarte und Online-Banking. Es ist auch möglich, einen Direktabzug von Ihrem Konto einzuricht..."
-      }
-    ],
-    "Problem": [
-      {
-        "ticket_id": "TKT-00021",
-        "language": "en",
-        "priority": "medium",
-        "queue": "Product Support",
-        "subject": "Issue with Asana Integration Noted",
-        "body": "Hello Customer Support,\\n\\nI am reaching out to inform you about an interruption in my Asana integration. The sync has malfunctioned, and I suspect it might be because of a misalignment in the API. After several attempts...",
-        "answer": "Hello <name>, we appreciate you bringing the Asana integration issue to our attention. We regret that the Asana sync has ceased working after your troubleshooting efforts. We will investigate this matter as quickly as po..."
-      },
-      {
-        "ticket_id": "TKT-00023",
-        "language": "en",
-        "priority": "high",
-        "queue": "Product Support",
-        "subject": "Investigation Needed for Investment Optimization Model Crash During Large Dataset Analysis",
-        "body": "The investment optimization model is experiencing crashes while analyzing large datasets. This may be due to software incompatibility or memory overload. Steps such as restarting applications and clearing cache have been...",
-        "answer": "We are investigating the issue with the investment optimization model crashing during large dataset analysis. To better assist you, could you please provide details on your software and system configuration? We would lik..."
-      },
-      {
-        "ticket_id": "TKT-00000",
-        "language": "de",
-        "priority": "high",
-        "queue": "Technical Support",
-        "subject": "Alarm für Datenverstoß",
-        "body": "Es gab einen medizinischen Datenverlust aufgrund mangelnder Verschlüsselung und veralteter Apache Hadoop. Es wurde unerlaubter Zugriff auf Patientendaten registriert. Wir haben MongoDB aktualisiert und Cassandra neu gest...",
-        "answer": "Ich werde den Data Breach Alert untersuchen, den Sie bezüglich des medizinischen Datenverlusts aufgrund mangelnder Verschlüsselung und veralteter Apache Hadoop gemeldet haben. Um dies genauer zu ermitteln, würde ich mich..."
-      }
-    ],
-    "Change": [
-      {
-        "ticket_id": "TKT-00005",
-        "language": "en",
-        "priority": "high",
-        "queue": "Service Outages and Maintenance",
-        "subject": "Urgent Service Update Needed",
-        "body": "Dear Customer Support, I hope this message finds you well. I am writing to draw your immediate attention to an urgent need for a service update to prevent potential interruptions to our investment analytics tools and pla...",
-        "answer": "Dear [Name], We acknowledge receipt of your email regarding the urgent need for a service update to prevent interruptions to your investment analytics tools and platforms. We understand the importance of resolving this i..."
-      },
-      {
-        "ticket_id": "TKT-00035",
-        "language": "en",
-        "priority": "low",
-        "queue": "Product Support",
-        "subject": "Airtable Security",
-        "body": "Hello Customer Support, I am reaching out to inquire about the implementation of enhanced encryption for Airtable to secure sensitive medical data and hospital IT systems. As you are likely aware, the security of medical...",
-        "answer": "I will provide you with information on Airtable's current encryption methods and additional security measures to protect sensitive medical data. This will include the possibility of end-to-end encryption and other protoc..."
-      },
-      {
-        "ticket_id": "TKT-00002",
-        "language": "de",
-        "priority": "medium",
-        "queue": "Technical Support",
-        "subject": "Optimierung der Datenverarbeitung",
-        "body": "Ich möchte eine Erweiterungsvorschlag für die Datenverarbeitung und Investitionsoptimierung einreichen. Bitte stellen Sie sicher, dass die Integration in betroffene Produkte kompatibel ist, um die Gesamtleistung zu verbe...",
-        "answer": "Sehr geehrte/r [Name],\\n\\nvielen Dank, dass Sie den Erweiterungsvorschlag für die Datenverarbeitung und Investitionsoptimierung gemeldet haben. Wir bedanken uns für Ihr Feedback und verstehen die Bedeutung der Kompatibil..."
-      }
-    ]
-  },
-  "examples_by_queue": {
-    "Technical Support": [
-      {
-        "ticket_id": "TKT-00006",
-        "language": "en",
-        "type": "Incident",
-        "priority": "high",
-        "subject": "Urgent: Issue with Data Encryption System",
-        "body": "Dear Customer Support, I am reaching out to discuss an unexpected problem with our data encryption system. The issue began abruptly, and we have not been able to pinpoint the exact cause. We believe i...",
-        "answer": "Dear [Your Name], Thank you for contacting us regarding the issue with your data encryption system. We understand the urgency and the impact this has had on your operations. To effectively assist you,..."
-      },
-      {
-        "ticket_id": "TKT-00000",
-        "language": "de",
-        "type": "Problem",
-        "priority": "high",
-        "subject": "Alarm für Datenverstoß",
-        "body": "Es gab einen medizinischen Datenverlust aufgrund mangelnder Verschlüsselung und veralteter Apache Hadoop. Es wurde unerlaubter Zugriff auf Patientendaten registriert. Wir haben MongoDB aktualisiert un...",
-        "answer": "Ich werde den Data Breach Alert untersuchen, den Sie bezüglich des medizinischen Datenverlusts aufgrund mangelnder Verschlüsselung und veralteter Apache Hadoop gemeldet haben. Um dies genauer zu ermit..."
-      }
-    ],
-    "Product Support": [
-      {
-        "ticket_id": "TKT-00021",
-        "language": "en",
-        "type": "Problem",
-        "priority": "medium",
-        "subject": "Issue with Asana Integration Noted",
-        "body": "Hello Customer Support,\\n\\nI am reaching out to inform you about an interruption in my Asana integration. The sync has malfunctioned, and I suspect it might be because of a misalignment in the API. Af...",
-        "answer": "Hello <name>, we appreciate you bringing the Asana integration issue to our attention. We regret that the Asana sync has ceased working after your troubleshooting efforts. We will investigate this mat..."
-      },
-      {
-        "ticket_id": "TKT-00007",
-        "language": "de",
-        "type": "Problem",
-        "priority": "high",
-        "subject": "Probleme mit Software-Abstürzen",
-        "body": "Untersuchung von Software-Abstürzen bei Investitionsdaten auf Ubuntu 20.04 LTS, möglicherweise Kompatibilitätsprobleme mit Microsoft Office 2021 und Bitbucket. Nach Neustart der Systeme, Neuinstallati...",
-        "answer": "Sehr geehrter Kundendienst, wir begegnen Software-Abstürzen in unserem Ubuntu-System. Um den Fehler besser zu verstehen, bitten wir um mehr Fehlermeldungen. Bitte geben Sie die Schritte an, die zu dem..."
-      }
-    ],
-    "Customer Service": [
-      {
-        "ticket_id": "TKT-00027",
-        "language": "en",
-        "type": "Request",
-        "priority": "high",
-        "subject": "Support Team for Data Analytics",
-        "body": "Looking for information on data analytics services, particularly for optimizing investment strategies. Could you provide details on the types of analytics that can assist in making informed investment...",
-        "answer": "<name> appreciates your interest in the data analytics services offered by our team, which includes a range of analytics such as predictive modeling and portfolio analysis. These tools help clients ma..."
-      },
-      {
-        "ticket_id": "TKT-00018",
-        "language": "de",
-        "type": "Incident",
-        "priority": "medium",
-        "subject": "Kritischer Punkt in der jüngsten digitalen Marketingkampagne",
-        "body": "Sehr geehrte Kundenservice,\\n\\nich schreibe, um einen ausstehenden Punkt in unserer jüngsten digitalen Marketingkampagne zur Aufmerksamkeit zu ziehen. Trotz aller Bemühungen ist die Kampagne den gewün...",
-        "answer": "Sehr geehrte <name>,\\n\\nich möchte anerkennen, dass Sie mir Ihren E-Mail-Bericht über die Probleme mit Ihrer jüngsten digitalen Marketingkampagne zugesendet haben. Ich entschuldige mich, dass die Kamp..."
-      }
-    ],
-    "IT Support": [
-      {
-        "ticket_id": "TKT-00001",
-        "language": "en",
-        "type": "Incident",
-        "priority": "high",
-        "subject": "Failure in Medical Data Encryption",
-        "body": "I'm encountering difficulties with the medical data encryption process. It suddenly stopped working, and I believe it could be because of compatibility issues with Redis 6.2. I've already restarted my...",
-        "answer": "I will help you with the medical data encryption failure. Please share more details about your setup and the error message you're seeing. I'll arrange a call to further diagnose and resolve the issue...."
-      },
-      {
-        "ticket_id": "TKT-00032",
-        "language": "de",
-        "type": "Change",
-        "priority": "high",
-        "subject": "Optimierung von Unterstützung für Datenanalysewerkzeuge",
-        "body": "Lieber Kundensupport, ich schreibe Ihnen anlässlich der Verbesserung unserer Datenanalysewerkzeuge, um die Optimierung der Entscheidungsfindung in der Investmentbranche zu verbessern. Der aktuelle Sof...",
-        "answer": "Sehr geehrter [Name], danke, dass Sie sich an uns gewandt haben, um die Aktualisierung unserer Unterstützung für Datenanalysewerkzeuge zu besprechen. Wir schätzen Ihre Rückmeldung und verstehen die Be..."
-      }
-    ],
-    "Billing and Payments": [
-      {
-        "ticket_id": "TKT-00013",
-        "language": "en",
-        "type": "Request",
-        "priority": "low",
-        "subject": "Exploring Integrations for Investment Analytics Tools with Codecademy",
-        "body": "Hello Customer Support, I am writing to seek information about the integrations available between Codecademy and investment analytics tools. As a Codecademy user, I am keen to explore how these integr...",
-        "answer": "Dear [user], we value your interest in integrating Codecademy with investment analytics tools. We currently provide integrations with several tools that offer real-time data and interactive visualizat..."
-      },
-      {
-        "ticket_id": "TKT-00003",
-        "language": "de",
-        "type": "Request",
-        "priority": "high",
-        "subject": "Digitale Dienste",
-        "body": "Welche Zahlungsmöglichkeiten gibt es?",
-        "answer": "Sehr geehrter Kunde, wir bieten eine Reihe von Zahlungsmöglichkeiten für unsere digitalen Dienste an, darunter Kreditkarte, Debitkarte und Online-Banking. Es ist auch möglich, einen Direktabzug von Ih..."
-      }
-    ],
-    "Returns and Exchanges": [
-      {
-        "ticket_id": "TKT-00117",
-        "language": "en",
-        "type": "Incident",
-        "priority": "low",
-        "subject": "Detected Unlawful Access to Patient Information",
-        "body": "Esteemed Customer Support, <br>We have identified unauthorized access to patient data. This may have resulted from inadequate firewall settings. Despite verifying user authentication methods, the prob...",
-        "answer": "I will look into the unauthorized access and suggest steps to secure your system. Please supply your account number and a suitable time for a call to delve deeper into the matter."
-      },
-      {
-        "ticket_id": "TKT-00012",
-        "language": "de",
-        "type": "Incident",
-        "priority": "low",
-        "subject": "Problems with Security in the Hospital IT Systems",
-        "body": "System errors leaving medical data exposed, security protocols lost. A restart was attempted, and unusual occurrences have been checked.",
-        "answer": "I recognize the issue regarding a security flaw in the hospital IT systems. Please provide more details on the system errors and access controls. We need to discuss this further. It would be best if y..."
-      }
-    ],
-    "Service Outages and Maintenance": [
-      {
-        "ticket_id": "TKT-00005",
-        "language": "en",
-        "type": "Change",
-        "priority": "high",
-        "subject": "Urgent Service Update Needed",
-        "body": "Dear Customer Support, I hope this message finds you well. I am writing to draw your immediate attention to an urgent need for a service update to prevent potential interruptions to our investment ana...",
-        "answer": "Dear [Name], We acknowledge receipt of your email regarding the urgent need for a service update to prevent interruptions to your investment analytics tools and platforms. We understand the importance..."
-      },
-      {
-        "ticket_id": "TKT-00011",
-        "language": "de",
-        "type": "Change",
-        "priority": "medium",
-        "subject": "Fachlich Unterstützung bei der Aktualisierung der digitalen Marketingstrategie",
-        "body": "Es ist wichtig, die digitale Marketingstrategie zu aktualisieren, um das Markenwachstum für betroffene Produkte und Plattformen zu fördern und die Markenpräsenz zu stärken, was auch zu einem breiteren...",
-        "answer": "Sehr geehrte [Name], ich möchte Ihre Anliegen hinsichtlich der Aktualisierung der digitalen Marketingstrategie, um das Markenwachstum zu verbessern, verstehen. Um Ihnen optimal zu helfen, bitte ich Si..."
-      }
-    ],
-    "Sales and Pre-Sales": [
-      {
-        "ticket_id": "TKT-00057",
-        "language": "en",
-        "type": "Problem",
-        "priority": "low",
-        "subject": "Concerns Regarding Project Management SaaS",
-        "body": "We are encountering sporadic connectivity problems with our project management SaaS, which is hindering real-time collaboration. Recent system updates seem to have increased user load, leading to thes...",
-        "answer": "Please investigate the issue with the project management SaaS. Kindly provide your account number so we can discuss potential solutions at a good time to call."
-      },
-      {
-        "ticket_id": "TKT-00017",
-        "language": "de",
-        "type": "Request",
-        "priority": "low",
-        "subject": "Detaillierte Informationen zu digitalen Markenwachstumsleistungen",
-        "body": "Könnten detaillierte Informationen über digitale Strategieleistungen zur Markenentwicklung liefern? Diese Informationen helfen, die Vorteile unserer Leistungen besser zu verstehen und ihnen zugutekomm...",
-        "answer": "Sehr geehrte [Name], wir freuen uns, Ihnen detaillierte Informationen zu unseren digitalen Markenwachstumsleistungen liefern zu können. Unsere Leistungen umfassen Sozialmedien-Management, Suchmaschine..."
-      }
-    ],
-    "Human Resources": [
-      {
-        "ticket_id": "TKT-00111",
-        "language": "en",
-        "type": "Problem",
-        "priority": "medium",
-        "subject": "",
-        "body": "customer support, data breach detected in healthcare system due to outdated security protocols. reviewed secure access logs and updated software, but the issue persists. immediate assistance is requir...",
-        "answer": "<name> acknowledges the email regarding the data breach detected in the healthcare system due to outdated security protocols. understands the urgency of the matter and requires immediate assistance to..."
-      },
-      {
-        "ticket_id": "TKT-00022",
-        "language": "de",
-        "type": "Incident",
-        "priority": "low",
-        "subject": "Message Regarding Security Breach",
-        "body": "Experienced unauthorized access attempts",
-        "answer": "Dear <name>, we take security incidents seriously. Could you provide more details about the unauthorized access attempts, including the date, time, and affected systems? This will help us investigate ..."
-      }
-    ],
-    "General Inquiry": [
-      {
-        "ticket_id": "TKT-00062",
-        "language": "en",
-        "type": "Problem",
-        "priority": "low",
-        "subject": "Subpar Performance of Digital Campaigns",
-        "body": "Insufficient utilization of data analysis tools",
-        "answer": "I will examine your digital campaigns and the data analysis tools in use to pinpoint areas for enhancement. Kindly furnish more specifics on your current tools and campaigns. I will evaluate and sugge..."
-      },
-      {
-        "ticket_id": "TKT-00810",
-        "language": "de",
-        "type": "Change",
-        "priority": "low",
-        "subject": "Anfrage an das Datenschutzzentrum",
-        "body": "Ich schreibe Ihnen, um Verbesserungen bei Datenschutzmaßnahmen, die sicherere Datenerfassung und -verwaltung von medizinischen Daten in IT-Systemen von Krankenhäusern anzufragen. Das ist von entscheid...",
-        "answer": "Sehr geehrter [Name], wir bedanken uns für Ihre Bedenken hinsichtlich Datenschutzmaßnahmen und der sicheren Datenerfassung und -verwaltung von medizinischen Daten in den IT-Systemen von Krankenhäusern..."
-      }
-    ]
-  }
+  "healthcare_vpn_outage_matches_kb_train": 5637
 }

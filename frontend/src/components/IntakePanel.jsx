@@ -60,31 +60,38 @@ export default function IntakePanel({
         </div>
 
         {/* Clean Privacy Mode Toggle */}
-        <div className="flex items-center justify-between rounded-xl border border-white/[0.06] bg-[#09090b] p-1">
-          <button
-            type="button"
-            onClick={() => onDrafterModeChange('cloud')}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium transition ${
-              drafterMode === 'cloud'
-                ? 'bg-zinc-800 text-white shadow-sm'
-                : 'text-zinc-400 hover:text-zinc-200'
-            }`}
-          >
-            <Cloud className="h-3.5 w-3.5 text-sky-400" />
-            Cloud · PII-Scrubbed
-          </button>
-          <button
-            type="button"
-            onClick={() => onDrafterModeChange('local')}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium transition ${
-              drafterMode === 'local'
-                ? 'bg-zinc-800 text-white shadow-sm'
-                : 'text-zinc-400 hover:text-zinc-200'
-            }`}
-          >
-            <Cpu className="h-3.5 w-3.5 text-emerald-400" />
-            Local · Air-Gapped
-          </button>
+        <div>
+          <div className="flex items-center justify-between rounded-xl border border-white/[0.06] bg-[#09090b] p-1">
+            <button
+              type="button"
+              onClick={() => onDrafterModeChange('cloud')}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium transition ${
+                drafterMode === 'cloud'
+                  ? 'bg-zinc-800 text-white shadow-sm'
+                  : 'text-zinc-400 hover:text-zinc-200'
+              }`}
+            >
+              <Cloud className="h-3.5 w-3.5 text-sky-400" />
+              Cloud · PII-Scrubbed
+            </button>
+            <button
+              type="button"
+              onClick={() => onDrafterModeChange('local')}
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium transition ${
+                drafterMode === 'local'
+                  ? 'bg-zinc-800 text-white shadow-sm'
+                  : 'text-zinc-400 hover:text-zinc-200'
+              }`}
+            >
+              <Cpu className="h-3.5 w-3.5 text-emerald-400" />
+              Local · Air-Gapped
+            </button>
+          </div>
+          <p className="mt-1.5 px-1 text-[11px] text-zinc-500">
+            {drafterMode === 'local'
+              ? '100% on-device: Calibrated LinearSVC + EmbeddingGemma 2 · 0 cloud API calls.'
+              : 'Hybrid Cloud: Local SVM + Gemini Decision-1 + Gemini 3.5 Flash-Lite (PII scrubbed first).'}
+          </p>
         </div>
 
         <button

@@ -43,7 +43,10 @@ export default function GroundingAuditCard({ audit }) {
           Pass-2 Grounding &amp; Policy Verification
         </div>
         <span className="font-mono text-[11px] text-zinc-400">
-          {audit.auditor_mode} · Citations {audit.citation_valid ? 'Valid' : 'Invalid'} · Policy{' '}
+          {audit.auditor_mode}
+          {audit.rapidfuzz_grounding_score !== undefined &&
+            ` · RapidFuzz ${Math.round(audit.rapidfuzz_grounding_score * 100)}%`}
+          {' · '}Citations {audit.citation_valid ? 'Valid' : 'Invalid'} · Policy{' '}
           {audit.deterministic_policy_passed ? 'Pass' : 'Blocked'}
         </span>
       </div>

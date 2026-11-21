@@ -4,7 +4,7 @@
   "device": "cuda",
   "dtype": "torch.bfloat16",
   "embedding_dim": 256,
-  "kb_indexed_rows": 16000,
+  "kb_indexed_rows": 22869,
   "available_prompts": [
     "BitextMining",
     "Classification",
@@ -27,6 +27,6 @@
     "document",
     "query"
   ],
-  "build_seconds": 83.23,
+  "build_seconds": 108.32,
   "zero_leakage_verified": true
 }

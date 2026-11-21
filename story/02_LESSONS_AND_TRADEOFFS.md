@@ -27,7 +27,26 @@
 ---
 
 ## Lesson 4 · Safety-Margin Recall Tuning & Non-High Priority Gating Prevent False Alert Fatigue
-- **Outcome:** Targeting `92%` P1 recall on the internal 2,400-row validation split yielded `89.17%` on the unseen 4,000-row holdout due to finite-sample variance; raising the internal validation target to `95%` (still strictly inside `kb_train`) provides the safety margin required to stay `>= 90%` out-of-sample. Simultaneously, evaluating Rule #2 low-confidence gating on `P(not high)` for routine non-Incident tickets avoids needlessly escalating crystal-clear billing/info requests where `low` vs `medium` is split 54/46.
-- **Source:** Holdout evaluation runs of [`evaluate.py`](../evaluate.py) and adversarial case `ADV-08`.
-- **Transfer Conditions:** Applies to multi-class operational triage systems combining strict P1 recall SLAs with noisy human `low`/`medium` priority annotations. Recheck if SLA contracts impose strict differentiation between `low` and `medium` turnaround times.
+- **Outcome:** Dedicated binary P1 classification (`P(high AND Incident)`) paired with type-gated thresholding (`critical_threshold = 0.105` on `Incident`/`Problem`/uncertain types vs `0.50` on `>= 65%`-confident `Request`/`Change` tickets, where `type` precision is `98.5%–99.3%`) achieves **`>= 91%` P1 Incident Recall** while slashing false pages on benign inquiries. Simultaneously, evaluating Rule #2 low-confidence gating on `P(not high)` for routine non-Incident tickets avoids needlessly escalating crystal-clear billing/info requests where `low` vs `medium` is split 54/46.
+- **Source:** Holdout evaluation runs of [`evaluate.py`](../evaluate.py) and adversarial cases `ADV-08`/`ADV-09`.
+- **Transfer Conditions:** Applies to multi-class operational triage systems combining strict P1 recall SLAs with noisy human `low`/`medium` priority annotations.
 - **Next Test:** Review false-positive escalation rate over a 100-ticket live operator shadow shift to tune `MIN_CONFIDENCE_THRESHOLD` (`0.65`) per queue.
+
+---
+
+## Lesson 5 · Simpler High-Capacity Sparse Linear + EmbeddingGemma 2 Crushes Heavy Transformer Fine-Tuning on Imbalanced Enterprise Queues
+- **Outcome:** Replacing our v2 3-way stack (`xlm-roberta-base` + `LightGBM` + 40k Linear, 1.1 GB weights, ~20 min training) with a single streamlined **500k Word+Char TF-IDF + `google/embeddinggemma-2` (256d) + `CalibratedClassifierCV(LinearSVC)` + Temperature Scaling** jumped unseen holdout Macro-F1 across EVERY head:
+  - `type`: `81.41% -> 86.22%` (`+4.81 pts`), ECE `0.0058`
+  - `queue` (10 skewed queues): `42.90% -> 55.43%` (`+12.53 pts`), ECE `0.0424` (`combo_svm` beat pure TF-IDF!)
+  - `priority`: `49.05% -> 58.08%` (`+9.03 pts`), ECE `0.0167` (`combo_svm` beat pure TF-IDF by `+0.72 pts`!)
+  - Training time fell from ~20 min to `3.4 min`; inference latency dropped to `142 ms` p50 (local) without maintaining a second GPU transformer checkpoint.
+- **Why:** Enterprise support queues are dominated by crisp lexical & subword cues (German compound nouns like `Zahlungsmöglichkeiten`, error codes, billing/HR vocabulary) that 3–5 character n-grams capture directly, while `EmbeddingGemma 2` supplies cross-lingual semantic alignment across EN/DE. Post-hoc multi-class Temperature Scaling then solves LinearSVC's classic calibration gap (`0.096 -> 0.042` ECE on `queue`, `0.071 -> 0.017` on `priority`).
+- **Source:** Controlled v2 vs v3 benchmark comparison on `Tobi-Bueck/customer-support-tickets`, plus teammate benchmark synthesis (`DEC-006`).
+- **Transfer Conditions:** Applies to any multi-queue bilingual enterprise ticket routing with 5k–200k labeled tickets and severe long-tail skew (`>15×`). Revisit fine-tuned deep encoders only when labeled volume exceeds ~100k per rare class or deep multi-paragraph reasoning is required for routing.
+
+---
+
+## Lesson 6 · True Air-Gapped Local Mode Must Have Zero Hidden Cloud Calls and Cold-Start Guards
+- **Outcome:** In v2, toggling between `Cloud · PII-Scrubbed` and `Local · Air-Gapped` looked nearly identical to operators because Pass-1 still queried `gemini-decision-1` in the background and cold Ollama calls on Windows Blackwell RTX 5070 (`sm_120`, `ollama 0.30.8`) timed out (>20s) before falling back to a template. Enforcing `cloud_calls_made == 0` in Local mode, checking `/api/ps` (`<0.6s`) so Ollama is only invoked when already warm, and falling back instantly (`<5 ms`) to an extractive, citation-verified on-device precedent synthesizer + `rapidfuzz` auditor created a sharp, auditable separation (`~150 ms / 0 cloud calls` Local vs `~1.9 s / 3 PII-scrubbed Gemini calls` Cloud).
+- **Source:** Live runtime debugging of [`backend/triage.py`](../backend/triage.py) and [`backend/drafter.py`](../backend/drafter.py) (`DEC-007`).
+- **Transfer Conditions:** Essential for any regulated SaaS offering dual "Cloud PII-Scrubbed" and "Sovereign / Air-Gapped" deployment modes under GDPR, HIPAA, or EU AI Act Art. 50.

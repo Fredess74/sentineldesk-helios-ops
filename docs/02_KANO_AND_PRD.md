@@ -2,7 +2,7 @@
 
 **Product:** SentinelDesk for Helios Managed Ops — Autonomous Incident Triage & Grounded Resolution Copilot  
 **Architecture Paradigm:** System 1 + System 2 Closed-Loop Control Plane  
-**Prerequisite Input:** Grounded in [`docs/01_RESEARCH_AND_DATA_AUDIT.md`](01_RESEARCH_AND_DATA_AUDIT.md) (`kb_train` N = 16,000; 7.27% null subjects; 21.7× queue imbalance; 17.65% P1 `high + Incident`; 86.98% L1 clarifying style).
+**Prerequisite Input:** Grounded in [`docs/01_RESEARCH_AND_DATA_AUDIT.md`](01_RESEARCH_AND_DATA_AUDIT.md) (`kb_train` N = 22,869 from official 28,587-row clean archive; 13.35% null subjects; 21.4× queue imbalance; 17.25% P1 `high + Incident`; 88.31% L1 clarifying style; only 1.06% refund/SLA mentions).
 
 ---
 
@@ -33,17 +33,17 @@
 flowchart TD
     A["Incoming Ticket (Subject optional + Body)"] --> B["Local Privacy Perimeter (privacy.py):<br/>Lingua EN/DE + Bidirectional PII/PHI Vault"]
     B --> C["EmbeddingGemma 2 (270M text-only, 256d, bfloat16/fp32)"]
-    C --> D["FAISS IndexFlatIP over kb_train ONLY (16,000 tickets)"]
-    C --> E["Local Calibrated ML Heads (type, queue, priority)<br/>256d Emb + 64d TF-IDF SVD + Structural Signals"]
-    B --> F["System 1: gemini-decision-1 Pass-1<br/>(7 parallel prefill questions, graceful ML fallback)"]
+    C --> D["FAISS IndexFlatIP over kb_train ONLY (22,869 tickets)"]
+    C --> E["Local Calibrated LinearSVC + EmbeddingGemma 2 (256d)<br/>500k Word+Char TF-IDF + Temp Scaling + Binary Critical Head"]
+    B --> F["Cloud Only: gemini-decision-1 Pass-1<br/>(0.75 SVM + 0.25 D1; Skipped in Air-Gapped Local Mode)"]
     C --> G["Multilingual Outage Burst Radar<br/>(>=3 EN/DE tickets, cos >= 0.78)"]
-    E --> H["Hybrid Calibrated Blend & Triangulation"]
+    E --> H["Hybrid Calibrated Blend + Negation-Aware EN/DE Impact Rules"]
     F --> H
     D --> H
-    H --> I{"5-Rule Escalation Gate<br/>P1 | Conf<0.65 | Sim<0.70 | Disagreement | Security"}
-    I -- "AUTO_DRAFT_READY" --> J["System 2 Drafter (Gemma 4)<br/>Cloud PII-Scrubbed OR Local Ollama gemma4:e4b"]
-    I -- "ESCALATE_ON_CALL" --> K["Warm Escalation Builder:<br/>Safe Native Holding Ack + On-Call War-Room Brief"]
-    J --> L["Pass-2 Grounding & Policy Veto<br/>Deterministic Guard + gemini-decision-1 Audit"]
+    H --> I{"5-Rule 3-Tier Escalation Gate<br/>PAGE_ON_CALL | HUMAN_REVIEW | AUTO_DRAFT_READY"}
+    I -- "AUTO_DRAFT_READY" --> J["System 2 Grounded Drafter<br/>Cloud: gemini-3.5-flash-lite | Local: Air-Gapped Synthesizer / Warm Ollama"]
+    I -- "PAGE_ON_CALL / HUMAN_REVIEW" --> K["Warm Escalation Builder:<br/>Safe Native Holding Ack + On-Call War-Room Brief"]
+    J --> L["Pass-2 Grounding & Policy Veto<br/>Deterministic Guard + RapidFuzz + gemini-decision-1 (Cloud)"]
     L -- "PASS" --> M["Operator Audit Glass UI:<br/>Cited Draft + Clickable [TKT-XXXXX] + PII Diff"]
     L -- "VETO (Hallucination / Bad Citation / Refund)" --> K
     K --> M

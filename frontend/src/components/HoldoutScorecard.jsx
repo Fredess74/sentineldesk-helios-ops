@@ -48,7 +48,8 @@ export default function HoldoutScorecard({ metrics, error }) {
             <span className="font-semibold text-emerald-300">Zero-Leakage Verified</span> ·{' '}
             {zl.kb_train_rows.toLocaleString()} KB train / {zl.holdout_test_rows.toLocaleString()} unseen holdout ·{' '}
             <span className="font-mono text-xs text-zinc-400">
-              {zl.ticket_id_overlap} overlapping IDs · {zl.embedding_model} ({zl.embedding_dim}d)
+              {zl.ticket_id_overlap} overlapping IDs
+              {zl.duplicate_text_grouped ? ' · Duplicate-Text Grouped' : ''} · {zl.embedding_model} ({zl.embedding_dim}d)
             </span>
           </div>
         </div>
@@ -62,7 +63,9 @@ export default function HoldoutScorecard({ metrics, error }) {
         <KpiCard
           label="High-Priority Incident Recall"
           value={`${(p1.recall * 100).toFixed(1)}%`}
-          hint={`${p1.tp}/${p1.total_true_p1} caught · target ≥ 90%`}
+          hint={`${p1.tp}/${p1.total_true_p1} caught${
+            p1.other_tickets_paged_pct !== undefined ? ` · ${p1.other_tickets_paged_pct}% non-P1 paged` : ''
+          }`}
           highlight={p1.recall >= 0.9 ? 'text-emerald-400' : 'text-amber-300'}
         />
         <KpiCard
@@ -94,6 +97,7 @@ export default function HoldoutScorecard({ metrics, error }) {
             <thead>
               <tr className="border-b border-white/[0.07] text-[11px] text-zinc-500">
                 <th className="py-2">Head</th>
+                <th className="py-2">Winner</th>
                 <th className="py-2">Macro-F1</th>
                 <th className="py-2">Accuracy</th>
                 <th className="py-2">ECE</th>
@@ -105,6 +109,7 @@ export default function HoldoutScorecard({ metrics, error }) {
                 return (
                   <tr key={head} className="text-zinc-200">
                     <td className="py-2.5 font-sans font-medium capitalize text-white">{head}</td>
+                    <td className="py-2.5 text-[11px] text-zinc-400">{h.chosen_model || 'ensemble'}</td>
                     <td className="py-2.5 font-semibold text-sky-300">{(h.macro_f1 * 100).toFixed(2)}%</td>
                     <td className="py-2.5">{(h.accuracy * 100).toFixed(2)}%</td>
                     <td className="py-2.5 text-emerald-400">{h.ece.toFixed(4)}</td>
