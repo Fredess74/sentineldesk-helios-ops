@@ -46,9 +46,9 @@ function renderCitations(text, onCiteClick) {
   })
 }
 
-function MetricTile({ label, value, confidence, accent = 'zinc' }) {
+function MetricTile({ label, value, confidence, accent = 'zinc', flaggedLow = false }) {
   const pct = Math.round((confidence ?? 0) * 100)
-  const low = confidence < 0.65
+  const low = flaggedLow || confidence < 0.65
   const textTone =
     accent === 'rose'
       ? 'text-rose-300'
@@ -59,12 +59,23 @@ function MetricTile({ label, value, confidence, accent = 'zinc' }) {
           : 'text-white'
 
   return (
-    <div className="flex flex-col justify-between rounded-xl border border-white/[0.07] bg-[#09090b] px-4 py-3">
-      <div className="flex items-center justify-between text-xs text-zinc-500">
+    <div
+      className={`flex flex-col justify-between rounded-xl border bg-[#09090b] px-4 py-3 transition ${
+        flaggedLow ? 'border-amber-500/45 ring-1 ring-amber-500/20' : 'border-white/[0.07]'
+      }`}
+    >
+      <div className="flex items-center justify-between gap-2 text-xs text-zinc-500">
         <span>{label}</span>
-        <span className={`font-mono font-medium ${low ? 'text-amber-400' : 'text-zinc-300'}`}>
-          {pct}%
-        </span>
+        <div className="flex items-center gap-1.5">
+          {flaggedLow && (
+            <span className="rounded bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-medium text-amber-300">
+              &lt; 65% gate
+            </span>
+          )}
+          <span className={`font-mono font-medium ${low ? 'text-amber-400' : 'text-zinc-300'}`}>
+            {pct}%
+          </span>
+        </div>
       </div>
       <div className={`mt-1.5 text-sm font-semibold leading-snug ${textTone}`} title={value}>
         {value}
@@ -123,6 +134,7 @@ export default function AuditGlassPanel({ result, loading, highlightedTicketId, 
   const isHumanReview = route === 'HUMAN_REVIEW'
   const isAirGapped = result.execution_mode === 'local_airgapped'
   const cloudCalls = triage?.cloud_calls_made ?? 0
+  const lowConfFields = new Set(escalation.low_confidence_fields || [])
   const prioTone =
     triage.priority.label === 'high'
       ? 'rose'
@@ -200,7 +212,7 @@ export default function AuditGlassPanel({ result, loading, highlightedTicketId, 
           </div>
         </div>
 
-        {/* Concise Escalation Reasons (Only when escalated) */}
+        {/* Clear Escalation Explanation (Only when escalated) */}
         {isEscalated && escalation.reasons?.length > 0 && (
           <div
             className={`mt-3 rounded-xl border px-3.5 py-2.5 text-xs ${
@@ -209,10 +221,19 @@ export default function AuditGlassPanel({ result, loading, highlightedTicketId, 
                 : 'border-amber-500/25 bg-amber-950/20 text-amber-100'
             }`}
           >
+            <div
+              className={`mb-1.5 text-[11px] font-semibold uppercase tracking-wide ${
+                isPageOnCall ? 'text-rose-300' : 'text-amber-300'
+              }`}
+            >
+              {isPageOnCall
+                ? 'Urgent On-Call Escalation — Why Paged'
+                : 'Human Review (Not a P1 Outage) — Why Auto-Draft Was Paused'}
+            </div>
             <ul className="space-y-1">
               {escalation.reasons.map((r, i) => (
-                <li key={i}>
-                  <span className={`font-semibold ${isPageOnCall ? 'text-rose-300' : 'text-amber-300'}`}>
+                <li key={i} className="leading-relaxed">
+                  <span className={`font-semibold ${isPageOnCall ? 'text-rose-300' : 'text-amber-200'}`}>
                     {r.label}:
                   </span>{' '}
                   {r.detail}
@@ -229,17 +250,20 @@ export default function AuditGlassPanel({ result, loading, highlightedTicketId, 
             value={triage.type.label}
             confidence={triage.type.confidence}
             accent={triage.type.label === 'Incident' ? 'rose' : 'zinc'}
+            flaggedLow={lowConfFields.has('type')}
           />
           <MetricTile
             label="Target Queue"
             value={triage.queue.label}
             confidence={triage.queue.confidence}
+            flaggedLow={lowConfFields.has('queue')}
           />
           <MetricTile
             label="Priority"
             value={triage.priority.label.toUpperCase()}
             confidence={triage.priority.confidence}
             accent={prioTone}
+            flaggedLow={lowConfFields.has('priority')}
           />
         </div>
       </div>
@@ -297,7 +321,9 @@ export default function AuditGlassPanel({ result, loading, highlightedTicketId, 
           </div>
 
           <div className="rounded-2xl border border-white/[0.08] bg-[#111114] p-5">
-            <h3 className="mb-2.5 text-sm font-semibold text-white">On-Call Engineer Brief</h3>
+            <h3 className="mb-2.5 text-sm font-semibold text-white">
+              {isPageOnCall ? 'On-Call Engineer Brief' : 'L1 / Specialist Review Brief'}
+            </h3>
             {resolution?.oncall_war_room_brief && (
               <div className="space-y-3 text-xs">
                 <div>

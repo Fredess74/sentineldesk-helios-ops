@@ -210,23 +210,35 @@ def evaluate_escalation_gate(
     label_is_p1 = priority_pred == "high" and type_pred == "Incident"
     # Type head achieves 98.5-99.3% precision on Request/Change; only apply low P1 floor to Incidents/Problems/uncertain types
     eff_crit_thr = 0.50 if (type_pred in ("Request", "Change") and type_conf >= MIN_CONFIDENCE_THRESHOLD) else float(critical_threshold)
-    detector_is_p1 = critical_score is not None and crit_val >= eff_crit_thr
+    strong_detector_p1 = critical_score is not None and crit_val >= max(0.35, eff_crit_thr)
+    borderline_detector_p1 = critical_score is not None and (not strong_detector_p1) and crit_val >= eff_crit_thr
     severe_impacts = severe_impact_triggers_page(impacts)
 
-    if label_is_p1 or detector_is_p1 or severe_impacts:
+    if label_is_p1 or strong_detector_p1 or severe_impacts:
         page_triggered = True
         triggers = []
         if label_is_p1:
             triggers.append(f"classified high Incident ({type_conf:.0%}/{priority_conf:.0%})")
-        if detector_is_p1:
-            triggers.append(f"critical detector score {crit_val:.0%} ≥ {critical_threshold:.0%}")
+        if strong_detector_p1:
+            triggers.append(f"high P1 critical risk ({crit_val:.0%})")
         if severe_impacts:
-            triggers.append("negation-checked impact: " + ", ".join(severe_impacts))
+            triggers.append("severe impact detected: " + ", ".join(severe_impacts))
         reasons.append(
             {
                 "rule_id": "RULE_1_P1_INCIDENT",
                 "label": "Critical P1 Incident",
-                "detail": f"Immediate on-call escalation in {queue_pred} ({'; '.join(triggers)}).",
+                "detail": f"Immediate on-call page for {queue_pred} ({'; '.join(triggers)}).",
+            }
+        )
+    elif borderline_detector_p1:
+        reasons.append(
+            {
+                "rule_id": "RULE_1_P1_INCIDENT",
+                "label": "Potential P1 Severity Check",
+                "detail": (
+                    f"Priority predicted as {priority_pred.upper()}, but the P1 safety detector flagged elevated "
+                    f"Incident risk ({crit_val:.0%}). Routed to human review before auto-replying."
+                ),
             }
         )
 
@@ -235,19 +247,26 @@ def evaluate_escalation_gate(
     if type_pred != "Incident" and priority_pred != "high" and p_high is not None:
         effective_prio_conf = max(priority_conf, 1.0 - float(p_high))
 
-    low_heads = []
+    low_heads_readable: list[str] = []
+    low_confidence_fields: list[str] = []
     if type_conf < MIN_CONFIDENCE_THRESHOLD:
-        low_heads.append(f"type={type_conf:.0%}")
+        low_heads_readable.append(f"Type ({type_conf:.0%})")
+        low_confidence_fields.append("type")
     if queue_conf < MIN_CONFIDENCE_THRESHOLD:
-        low_heads.append(f"queue={queue_conf:.0%}")
+        low_heads_readable.append(f"Target Queue ({queue_conf:.0%})")
+        low_confidence_fields.append("queue")
     if effective_prio_conf < MIN_CONFIDENCE_THRESHOLD:
-        low_heads.append(f"priority={effective_prio_conf:.0%}")
-    if low_heads:
+        low_heads_readable.append(f"Priority ({effective_prio_conf:.0%})")
+        low_confidence_fields.append("priority")
+    if low_heads_readable:
         reasons.append(
             {
                 "rule_id": "RULE_2_LOW_CONFIDENCE",
-                "label": "Low Calibrated Confidence",
-                "detail": f"Calibrated confidence below {MIN_CONFIDENCE_THRESHOLD:.0%} ({', '.join(low_heads)}).",
+                "label": "Low Routing Confidence",
+                "detail": (
+                    f"Auto-draft paused because {', '.join(low_heads_readable)} fell below the "
+                    f"{MIN_CONFIDENCE_THRESHOLD:.0%} confidence threshold — confirm routing before replying."
+                ),
             }
         )
 
@@ -314,6 +333,7 @@ def evaluate_escalation_gate(
         "initial_status": status,
         "flipped_by_pass2_veto": False,
         "impact_signals": impacts,
+        "low_confidence_fields": low_confidence_fields,
         "reasons": reasons,
     }
 
