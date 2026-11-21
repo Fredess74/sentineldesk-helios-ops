@@ -1,0 +1,27 @@
+# Core ML, Embeddings & Vector Search
+torch>=2.6.0
+torchvision>=0.21.0
+pillow>=10.0.0
+sentence-transformers>=6.1.0
+faiss-cpu>=1.10.0
+lightgbm>=4.5.0
+scikit-learn>=1.6.0
+numpy>=1.26.0
+pandas>=2.2.0
+pyarrow>=18.0.0
+datasets>=3.0.0
+joblib>=1.4.0
+
+# Language Detection & Privacy
+lingua-language-detector>=2.1.0
+
+# LLM / Decisions API & HTTP
+google-genai>=3.2.0
+httpx>=0.28.0
+python-dotenv>=1.0.1
+
+# Backend API & Testing
+fastapi>=0.115.0
+uvicorn[standard]>=0.34.0
+pydantic>=2.10.0
+pytest>=8.3.0

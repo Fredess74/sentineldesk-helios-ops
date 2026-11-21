@@ -1,0 +1,30 @@
+# Python & environments
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Environment secrets
+.env
+.env.local
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+
+# Large generated data & binary indices (reproducible via scripts)
+data/*.parquet
+artifacts/*.index
+artifacts/*.npy
+artifacts/*.npz
+artifacts/*.pt
+artifacts/*.joblib
+artifacts/*.parquet
+!artifacts/holdout_metrics.json
+!artifacts/kb_audit_summary.json
+!artifacts/index_meta.json
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+*.log

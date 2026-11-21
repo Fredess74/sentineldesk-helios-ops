@@ -1,0 +1,32 @@
+{
+  "model_name": "google/embeddinggemma-2",
+  "fallback_used": false,
+  "device": "cuda",
+  "dtype": "torch.bfloat16",
+  "embedding_dim": 256,
+  "kb_indexed_rows": 16000,
+  "available_prompts": [
+    "BitextMining",
+    "Classification",
+    "Clustering",
+    "CodeRetrieval",
+    "Document",
+    "FactChecking",
+    "InstructionRetrieval",
+    "MultilabelClassification",
+    "PairClassification",
+    "QuestionAnswering",
+    "Reranking",
+    "Retrieval",
+    "Retrieval-document",
+    "Retrieval-query",
+    "STS",
+    "SearchQuery",
+    "SentenceSimilarity",
+    "Summarization",
+    "document",
+    "query"
+  ],
+  "build_seconds": 83.23,
+  "zero_leakage_verified": true
+}
