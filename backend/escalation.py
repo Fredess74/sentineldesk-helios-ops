@@ -351,18 +351,32 @@ class OutageBurstRadar:
         ticket_type: str,
         embedding: np.ndarray,
     ) -> dict[str, Any]:
+        # Only track incident/problem or high-priority tickets — routine inquiries/requests never trigger an outage storm
+        if ticket_type not in ("Incident", "Problem") and priority != "high":
+            return self.snapshot()
+
         now = time.time()
         vec = np.asarray(embedding, dtype=np.float32).reshape(-1)
         norm = float(np.linalg.norm(vec))
         if norm > 0:
             vec = vec / norm
 
+        norm_key = re.sub(r"\s+", " ", f"{(subject or '').strip()} {(body or '').strip()}".lower()).strip()
+
         with self._lock:
             self._prune(now)
+            # Deduplicate exact re-submissions (e.g., operator retrying or toggling Cloud vs Local on the same ticket)
+            for existing in self._buffer:
+                if existing.get("text_key") == norm_key:
+                    existing["timestamp"] = now
+                    existing["iso_time"] = datetime.fromtimestamp(now, tz=timezone.utc).isoformat()
+                    return self._compute_clusters_locked()
+
             self._seq += 1
             self._buffer.append(
                 {
                     "request_id": request_id,
+                    "text_key": norm_key,
                     "subject": (subject or "").strip() or "(No Subject)",
                     "body_preview": ((body or "").strip()[:140] + "...") if len((body or "").strip()) > 140 else (body or "").strip(),
                     "language": language,

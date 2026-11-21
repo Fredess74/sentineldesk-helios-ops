@@ -172,13 +172,50 @@ def test_multilingual_outage_burst_radar_clusters_en_and_de():
     radar = OutageBurstRadar(similarity_threshold=0.78, min_tickets=3)
     base = np.ones(256, dtype=np.float32)
     base /= np.linalg.norm(base)
+
+    # Routine low-priority Requests and duplicate re-submissions must NOT trigger a Major Incident alert
+    for i in range(4):
+        out_req = radar.record(
+            request_id=f"REQ-{i}",
+            subject="Payment methods",
+            body=f"Which payment options do you support #{i}?",
+            language="en",
+            queue="Billing and Payments",
+            priority="low",
+            ticket_type="Request",
+            embedding=base,
+        )
+        assert out_req["active_outage"] is False
+
+    # Re-running the exact same incident text 3x (e.g. toggling Cloud vs Local) must deduplicate, not alert
+    for i in range(3):
+        out_dup = radar.record(
+            request_id=f"DUP-{i}",
+            subject="Hospital VPN down",
+            body="Exact same ticket retried",
+            language="en",
+            queue="Technical Support",
+            priority="high",
+            ticket_type="Incident",
+            embedding=base,
+        )
+        assert out_dup["active_outage"] is False
+    radar.reset()
+
+    # 3 distinct EN + DE Incident tickets with high semantic similarity MUST cluster and trigger
     out = None
-    for i, lang in enumerate(["en", "en", "de"]):
+    for i, (lang, msg) in enumerate(
+        [
+            ("en", "Austin clinic VPN gateway down blocking EMR access"),
+            ("en", "Dallas hospital VPN tunnel failed across wards"),
+            ("de", "Klinikum München VPN-Gateway ausgefallen, kein EMR-Zugriff"),
+        ]
+    ):
         vec = base + np.random.default_rng(i).normal(0, 0.005, size=256).astype(np.float32)
         out = radar.record(
             request_id=f"T-{i}",
-            subject="Hospital VPN down",
-            body="VPN outage",
+            subject=f"Hospital VPN down #{i + 1}",
+            body=msg,
             language=lang,
             queue="Technical Support",
             priority="high",
